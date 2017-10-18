@@ -4,7 +4,7 @@
   "description": "A React preloader component, for displaying an indicator while performing asynchronous tasks.",
   "main": "lib/index.js",
   "scripts": {
-    "build:production": "babel src --out-dir lib --ignore test.jsx",
+    "build:production": "babel src --out-dir lib --ignore **/*.test.js,**/*.test.jsx",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "lint": "eslint --ext .js .",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
