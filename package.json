@@ -30,8 +30,7 @@
     "lodash.isboolean": "^3.0.3",
     "lodash.isfunction": "^3.0.8",
     "prop-types": "^15.6.0",
-    "react": "^16.0.0",
-    "react-maybe": "^1.0.4"
+    "react": "^16.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
