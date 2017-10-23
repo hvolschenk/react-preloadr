@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import Maybe from 'react-maybe';
 
 import {
   PRELOAD_STATUS_FAILED,
@@ -7,12 +8,16 @@ import {
   PRELOAD_STATUS_SUCCEEDED,
 } from './status';
 
+export const isRequested = status => status === PRELOAD_STATUS_REQUESTED;
+export const isFailed = status => status === PRELOAD_STATUS_FAILED;
+
 const Preloadr = ({ children, failed, requested, status }) => (
-  <div>
-    {status === PRELOAD_STATUS_FAILED && failed}
-    {status === PRELOAD_STATUS_REQUESTED && requested}
-    {status === PRELOAD_STATUS_SUCCEEDED && children}
-  </div>
+  <Maybe
+    of={status}
+    map={isRequested}
+    either={requested}
+    orElse={<Maybe of={status} map={isFailed} either={failed} orElse={children} />}
+  />
 );
 
 Preloadr.propTypes = {
