@@ -1,8 +1,7 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
-import Maybe from 'react-maybe';
 
-import Preloadr from './component';
+import Preloadr, { Empty } from './component';
 import {
   PRELOAD_STATUS_FAILED,
   PRELOAD_STATUS_REQUESTED,
@@ -14,13 +13,13 @@ describe('<Preloadr />', () => {
   const Failed = () => <p>Failed</p>;
   const Requested = () => <p>Requested</p>;
   test(`Loads the 'failed' component on ${PRELOAD_STATUS_FAILED}`, () => {
-    const wrapper = mount(
+    const wrapper = shallow(
       <Preloadr
-        failed={<Failed />}
-        requested={<Requested />}
+        failed={() => <Failed />}
+        requested={() => <Requested />}
         status={PRELOAD_STATUS_FAILED}
       >
-        <Children />
+        {() => <Children />}
       </Preloadr>,
     );
 
@@ -30,12 +29,12 @@ describe('<Preloadr />', () => {
   });
 
   test('Loads the \'requested\' component by default', () => {
-    const wrapper = mount(
+    const wrapper = shallow(
       <Preloadr
-        failed={<Failed />}
-        requested={<Requested />}
+        failed={() => <Failed />}
+        requested={() => <Requested />}
       >
-        <Children />
+        {() => <Children />}
       </Preloadr>,
     );
 
@@ -45,13 +44,13 @@ describe('<Preloadr />', () => {
   });
 
   test(`Loads the 'requested' component on ${PRELOAD_STATUS_REQUESTED}`, () => {
-    const wrapper = mount(
+    const wrapper = shallow(
       <Preloadr
-        failed={<Failed />}
-        requested={<Requested />}
+        failed={() => <Failed />}
+        requested={() => <Requested />}
         status={PRELOAD_STATUS_REQUESTED}
       >
-        <Children />
+        {() => <Children />}
       </Preloadr>,
     );
 
@@ -61,13 +60,13 @@ describe('<Preloadr />', () => {
   });
 
   test(`Loads the 'children' component on ${PRELOAD_STATUS_SUCCEEDED}`, () => {
-    const wrapper = mount(
+    const wrapper = shallow(
       <Preloadr
-        failed={<Failed />}
-        requested={<Requested />}
+        failed={() => <Failed />}
+        requested={() => <Requested />}
         status={PRELOAD_STATUS_SUCCEEDED}
       >
-        <Children />
+        {() => <Children />}
       </Preloadr>,
     );
 
@@ -76,10 +75,14 @@ describe('<Preloadr />', () => {
     expect(wrapper.find(Requested).exists()).toBeFalsy();
   });
 
-  test('Loads undefined for \'failed\' and \'requested\' by default', () => {
-    const wrapper = shallow(<Preloadr status={PRELOAD_STATUS_SUCCEEDED}><Children /></Preloadr>);
+  test('Loads null for \'failed\' and \'requested\' by default', () => {
+    const wrapper = mount(
+      <Preloadr status={PRELOAD_STATUS_FAILED}>
+        {() => <Children />}
+      </Preloadr>,
+    );
 
-    expect(wrapper.find(Maybe).at(0).props().either).toBe(undefined);
-    expect(wrapper.find(Maybe).at(1).props().either).toBe(undefined);
+    expect(wrapper.props().failed).toEqual(Empty);
+    expect(wrapper.props().requested).toEqual(Empty);
   });
 });

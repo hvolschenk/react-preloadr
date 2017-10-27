@@ -102,8 +102,8 @@ class ProductsLoader extends React.Component {
   }
   render() {
     return (
-      <Preloadr failed={<Failed />} requested={<Requested />} status={status}>
-        <Products payload={payload} />
+      <Preloadr failed={() => <Failed />} requested={() => <Requested />} status={status}>
+        {() => <Products payload={payload} />}
       </Preloadr>
     );
   }
