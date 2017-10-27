@@ -82,11 +82,7 @@ status and payload and pass it to `<Preloadr />`:
 ```js
 import PropTypes from 'prop-types';
 import React from 'react';
-import Preloadr, {
-  PRELOAD_STATUS_FAILED,
-  PRELOAD_STATUS_REQUESTED,
-  PRELOAD_STATUS_SUCCEEDED,
-} from 'react-preloadr';
+import Preloadr, { preloadDefaultProp, preloadPropTypes } from 'react-preloadr';
 
 import { productsRequestedAsync } from 'reducers/products/actions';
 
@@ -111,15 +107,12 @@ class ProductsLoader extends React.Component {
 
 ProductsLoader.propTypes = {
   payload: PropTypes.arrayOf(PropTypes.shape()),
-  status: PropTypes.oneOf([
-    PRELOAD_STATUS_FAILED,
-    PRELOAD_STATUS_REQUESTED,
-    PRELOAD_STATUS_SUCCEEDED,
-  ]).isRequired,
+  status: preloadDefaultProps,
 };
 
 ProductsLoader.defaultProps = {
   payload: [],
+  status: preloadDefaultProp,
 };
 
 const mapStateToProps = state => state.products;
