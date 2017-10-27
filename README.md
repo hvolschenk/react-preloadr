@@ -120,3 +120,7 @@ const mapDispatchToProps = dispatch => ({ fetchProducts: dispatch(productsReques
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductsLoader);
 ```
+
+## Usage without redux
+
+This component can also be used without Redux, documentation coming soon.
