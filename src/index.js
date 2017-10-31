@@ -1,4 +1,3 @@
-export { default as action } from './actions';
 export { default } from './component';
 export { default as reducer } from './reducer';
 export {
