@@ -1,5 +1,9 @@
 # react-preloadr
 
+[![Build Status](https://travis-ci.org/hvolschenk/react-preloadr.svg?branch=master)](https://travis-ci.org/hvolschenk/react-preloadr)
+[![Coverage Status](https://coveralls.io/repos/github/hvolschenk/react-preloadr/badge.svg?branch=master)](https://coveralls.io/github/hvolschenk/react-preloadr?branch=master)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+
 A React preloader component, for displaying an indicator while performing asynchronous tasks. It
 includes the `<Preloadr />` component, a simple redux reducer and a simple action creator for the
 redux reducer.
@@ -20,24 +24,28 @@ included.
 
 ### Action creators
 
-To build your own action creators you can make use of the three statuses and the action creator
-factory provided by `react-preloadr`, we are using `redux-thunk` in this example for our
-asynchronous loading:
+We are using `redux-thunk` in this example for our asynchronous loading:
 
 _/reducers/products/actions.js:_
 
 ```js
-import { action } from 'react-preloadr';
-
 import fetchProducts from 'api/products';
 
 export const PRODUCTS_FAILED = 'PRODUCTS_FAILED';
 export const PRODUCTS_REQUESTED = 'PRODUCTS_REQUESTED';
 export const PRODUCTS_SUCCEEDED = 'PRODUCTS_SUCCEEDED';
 
-export const productsFailed = action(PRODUCTS_FAILED);
-export const productsRequested = action(PRODUCTS_REQUESTED);
-export const productsSucceeded = action(PRODUCTS_SUCCEEDED);
+export const productsFailed = payload => ({
+  payload,
+  type: PRODUCTS_FAILED,
+});
+export const productsRequested = () => ({
+  type: PRODUCTS_REQUESTED,
+});
+export const productsSucceeded = payload => ({
+  payload,
+  type: PRODUCTS_SUCCEEDED,
+});
 
 export const productsRequestedAsync = () => (dispatch) => {
   dispatch(productsRequested());
@@ -92,7 +100,7 @@ const Products = ({ payload }) => (
   <ul>{payload.map(product => <li key={product.id}>{product.name}</li>)}</ul>
 );
 
-class ProductsLoader extends React.Component {
+class Products extends React.Component {
   componentDidMount() {
     this.props.fetchProducts();
   }
@@ -105,12 +113,12 @@ class ProductsLoader extends React.Component {
   }
 }
 
-ProductsLoader.propTypes = {
+Products.propTypes = {
   payload: PropTypes.arrayOf(PropTypes.shape()),
   status: preloadDefaultProps,
 };
 
-ProductsLoader.defaultProps = {
+Products.defaultProps = {
   payload: [],
   status: preloadDefaultProp,
 };
@@ -118,9 +126,50 @@ ProductsLoader.defaultProps = {
 const mapStateToProps = state => state.products;
 const mapDispatchToProps = dispatch => ({ fetchProducts: dispatch(productsRequestedAsync()) });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProductsLoader);
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
 ```
 
 ## Usage without redux
 
-This component can also be used without Redux, documentation coming soon.
+This component can also be used without Redux, to do this you will have to manually set the status
+as you are doing your asynchronous call.
+
+```js
+import PropTypes from 'prop-types';
+import React from 'react';
+import Preloadr, {
+  PRELOAD_STATUS_FAILED,
+  PRELOAD_STATUS_REQUESTED,
+  PRELOAD_STATUS_SUCCEEDED,
+} from 'react-preloadr';
+
+import fetchProducts from 'api/products';
+
+const Failed = () => <p>Something went wrong</p>;
+const Requested = () => <p>Loading products</p>;
+
+class Products extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      payload: [],
+      status: PRELOAD_STATUS_REQUESTED,
+    };
+  }
+  componentDidMount() {
+    fetchProducts()
+      .then(payload => this.setState({ payload, status: PRELOAD_STATUS_SUCCEEDED }))
+      .catch(error => this.setState({ payload: error, status: PRELOAD_STATUS_FAILED }));
+  }
+  render() {
+    const { payload, status } = this.state;
+    return (
+      <Preloadr failed={() => <Failed />} requested={() => <Requested />} status={status}>
+        {() => <Products payload={payload} />}
+      </Preloadr>
+    );
+  }
+}
+
+export default Products;
+```
