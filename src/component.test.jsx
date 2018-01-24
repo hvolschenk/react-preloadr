@@ -8,81 +8,177 @@ import {
   PRELOAD_STATUS_SUCCEEDED,
 } from './status';
 
-describe('<Preloadr />', () => {
-  const Children = () => <p>Succeeded</p>;
-  const Failed = () => <p>Failed</p>;
-  const Requested = () => <p>Requested</p>;
-  test(`Loads the 'failed' component on ${PRELOAD_STATUS_FAILED}`, () => {
-    const wrapper = shallow(
-      <Preloadr
-        failed={() => <Failed />}
-        requested={() => <Requested />}
-        status={PRELOAD_STATUS_FAILED}
-      >
-        {() => <Children />}
-      </Preloadr>,
-    );
+const Children = () => <p>Succeeded</p>;
+const Failed = () => <p>Failed</p>;
+const Requested = () => <p>Requested</p>;
 
-    expect(wrapper.find(Failed).exists()).toBeTruthy();
-    expect(wrapper.find(Children).exists()).toBeFalsy();
-    expect(wrapper.find(Requested).exists()).toBeFalsy();
-  });
+test(`<Preloadr /> > Loads the 'failed' component on ${PRELOAD_STATUS_FAILED}`, () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+      status={PRELOAD_STATUS_FAILED}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = false;
+  const expectedFailed = true;
+  const expectedRequested = false;
 
-  test('Loads the \'requested\' component by default', () => {
-    const wrapper = shallow(
-      <Preloadr
-        failed={() => <Failed />}
-        requested={() => <Requested />}
-      >
-        {() => <Children />}
-      </Preloadr>,
-    );
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
 
-    expect(wrapper.find(Requested).exists()).toBeTruthy();
-    expect(wrapper.find(Children).exists()).toBeFalsy();
-    expect(wrapper.find(Failed).exists()).toBeFalsy();
-  });
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
 
-  test(`Loads the 'requested' component on ${PRELOAD_STATUS_REQUESTED}`, () => {
-    const wrapper = shallow(
-      <Preloadr
-        failed={() => <Failed />}
-        requested={() => <Requested />}
-        status={PRELOAD_STATUS_REQUESTED}
-      >
-        {() => <Children />}
-      </Preloadr>,
-    );
+test(`<Preloadr /> > Loads the 'failed' component if a single status is ${PRELOAD_STATUS_FAILED}`, () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+      status={[PRELOAD_STATUS_FAILED, PRELOAD_STATUS_SUCCEEDED]}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = false;
+  const expectedFailed = true;
+  const expectedRequested = false;
 
-    expect(wrapper.find(Requested).exists()).toBeTruthy();
-    expect(wrapper.find(Children).exists()).toBeFalsy();
-    expect(wrapper.find(Failed).exists()).toBeFalsy();
-  });
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
 
-  test(`Loads the 'children' component on ${PRELOAD_STATUS_SUCCEEDED}`, () => {
-    const wrapper = shallow(
-      <Preloadr
-        failed={() => <Failed />}
-        requested={() => <Requested />}
-        status={PRELOAD_STATUS_SUCCEEDED}
-      >
-        {() => <Children />}
-      </Preloadr>,
-    );
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
 
-    expect(wrapper.find(Children).exists()).toBeTruthy();
-    expect(wrapper.find(Failed).exists()).toBeFalsy();
-    expect(wrapper.find(Requested).exists()).toBeFalsy();
-  });
+test('<Preloadr /> > Loads the \'requested\' component by default', () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = false;
+  const expectedFailed = false;
+  const expectedRequested = true;
 
-  test('Loads null for \'failed\' and \'requested\' by default', () => {
-    const wrapper = mount(
-      <Preloadr status={PRELOAD_STATUS_FAILED}>
-        {() => <Children />}
-      </Preloadr>,
-    );
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
 
-    expect(wrapper.props().failed).toEqual(Empty);
-    expect(wrapper.props().requested).toEqual(Empty);
-  });
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
+
+test(`<Preloadr /> > Loads the 'requested' component on ${PRELOAD_STATUS_REQUESTED}`, () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+      status={PRELOAD_STATUS_REQUESTED}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = false;
+  const expectedFailed = false;
+  const expectedRequested = true;
+
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
+
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
+
+test(`<Preloadr /> > Loads the 'requested' component if a single status is ${PRELOAD_STATUS_REQUESTED}`, () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+      status={[PRELOAD_STATUS_FAILED, PRELOAD_STATUS_REQUESTED, PRELOAD_STATUS_SUCCEEDED]}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = false;
+  const expectedFailed = false;
+  const expectedRequested = true;
+
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
+
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
+
+test(`<Preloadr /> > Loads the 'children' component on ${PRELOAD_STATUS_SUCCEEDED}`, () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+      status={PRELOAD_STATUS_SUCCEEDED}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = true;
+  const expectedFailed = false;
+  const expectedRequested = false;
+
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
+
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
+
+test(`<Preloadr /> > Loads the 'children' component if all are ${PRELOAD_STATUS_SUCCEEDED}`, () => {
+  const wrapper = shallow(
+    <Preloadr
+      failed={() => <Failed />}
+      requested={() => <Requested />}
+      status={[PRELOAD_STATUS_SUCCEEDED, PRELOAD_STATUS_SUCCEEDED, PRELOAD_STATUS_SUCCEEDED]}
+    >
+      {() => <Children />}
+    </Preloadr>,
+  );
+  const expectedChildren = true;
+  const expectedFailed = false;
+  const expectedRequested = false;
+
+  const actualChildren = wrapper.find(Children).exists();
+  const actualFailed = wrapper.find(Failed).exists();
+  const actualRequested = wrapper.find(Requested).exists();
+
+  expect(actualChildren).toBe(expectedChildren);
+  expect(actualFailed).toBe(expectedFailed);
+  expect(actualRequested).toBe(expectedRequested);
+});
+
+test('<Preloadr /> > Loads null for \'failed\' and \'requested\' by default', () => {
+  const wrapper = mount(
+    <Preloadr status={PRELOAD_STATUS_FAILED}>
+      {() => <Children />}
+    </Preloadr>,
+  );
+
+  expect(wrapper.props().failed).toEqual(Empty);
+  expect(wrapper.props().requested).toEqual(Empty);
 });
