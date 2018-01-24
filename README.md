@@ -96,7 +96,7 @@ import { productsRequestedAsync } from 'reducers/products/actions';
 
 const Failed = () => <p>Failed to load products</p>;
 const Requested = () => <p>Loading products</p>;
-const Products = ({ payload }) => (
+const ProductsList = ({ payload }) => (
   <ul>{payload.map(product => <li key={product.id}>{product.name}</li>)}</ul>
 );
 
@@ -105,9 +105,10 @@ class Products extends React.Component {
     this.props.fetchProducts();
   }
   render() {
+    const { payload, status } = this.props;
     return (
       <Preloadr failed={() => <Failed />} requested={() => <Requested />} status={status}>
-        {() => <Products payload={payload} />}
+        {() => <ProductsList payload={payload} />}
       </Preloadr>
     );
   }
@@ -172,4 +173,81 @@ class Products extends React.Component {
 }
 
 export default Products;
+```
+
+## Multiple statii
+
+It is also possible to send multiple statii to `<Preloadr />`. First, if any of the statii is
+`PRELOAD_STATUS_REQUESTED` the `requested` component will be loaded. Secondly, if any of the statii
+is `PRELOAD_STATUS_FAILED` the `failed` component will be loaded (after all
+`PRELOAD_STATUS_REQUESTED` are resolved). If all statii are `PRELOAD_STATUS_SUCCEEDED` then the
+`children` component will be loaded:
+
+```js
+import PropTypes from 'prop-types';
+import React from 'react';
+import Preloadr, { preloadDefaultProp, preloadPropTypes } from 'react-preloadr';
+
+import { productsRequestedAsync } from 'reducers/products/actions';
+import { usersRequestedAsync } from 'reducers/users/actions';
+
+const Failed = () => <p>Failed to load products</p>;
+const Requested = () => <p>Loading products</p>;
+const ProductsList = ({ products, users }) => (
+  <div><!-- Do something with products and users --></div>
+);
+
+class Products extends React.Component {
+  componentDidMount() {
+    const { fetchProducts, fetchUsers } = this.props;
+  }
+  render() {
+    const {
+      products: { payload: productsPayload, status: productsStatus },
+      users: { payload: usersPayload, status: usersStatus },
+    } = this.props;
+    return (
+      <Preloadr
+        failed={() => <Failed />}
+        requested={() => <Requested />}
+        status={[productsStatus, usersStatus]}
+      >
+        {() => <ProductsList products={productsPayload} users={usersPayload} />}
+      </Preloadr>
+    );
+  }
+}
+
+Products.propTypes = {
+  products: PropTypes.shape({
+    payload: PropTypes.arrayOf(PropTypes.shape()),
+    status: preloadDefaultProps,
+  }),
+  users: PropTypes.shape({
+    payload: PropTypes.arrayOf(PropTypes.shape()),
+    status: preloadDefaultProps,
+  }),
+};
+
+Products.defaultProps = {
+  products: {
+    payload: [],
+    status: preloadDefaultProp,
+  },
+  users: {
+    payload: [],
+    status: preloadDefaultProp,
+  },
+};
+
+const mapStateToProps = state => ({
+  products: state.products,
+  users: state.users,
+});
+const mapDispatchToProps = dispatch => ({
+  fetchProducts: dispatch(productsRequestedAsync()),
+  fetchUsers: dispatch(usersRequestedAsync()),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Products);
 ```
