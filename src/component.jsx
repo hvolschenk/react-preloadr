@@ -11,14 +11,14 @@ import {
 
 export const Empty = () => null;
 
-export const isFailedSingle = status => status === PRELOAD_STATUS_FAILED;
-export const isFailedMultiple = statii => statii.some(isFailedSingle);
-export const isFailed = status =>
+const isFailedSingle = status => status === PRELOAD_STATUS_FAILED;
+const isFailedMultiple = statii => statii.some(isFailedSingle);
+const isFailed = status =>
   (isArray(status) ? isFailedMultiple(status) : isFailedSingle(status));
 
-export const isRequestedSingle = status => status === PRELOAD_STATUS_REQUESTED;
-export const isRequestedMultiple = statii => statii.some(isRequestedSingle);
-export const isRequested = status =>
+const isRequestedSingle = status => status === PRELOAD_STATUS_REQUESTED;
+const isRequestedMultiple = statii => statii.some(isRequestedSingle);
+const isRequested = status =>
   (isArray(status) ? isRequestedMultiple(status) : isRequestedSingle(status));
 
 const Preloadr = ({ children, failed, requested, status }) =>
