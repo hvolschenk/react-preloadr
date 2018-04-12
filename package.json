@@ -9,7 +9,7 @@
     "lint": "eslint --ext .js .",
     "semantic-release": "semantic-release",
     "test": "npm run lint && npm run test:vulnerabilities && npm run test:scripts",
-    "test:scripts": "jest --coverage",
+    "test:scripts": "jest --coverage --config ./jest.config.json",
     "test:vulnerabilities": "nsp check"
   },
   "repository": {
@@ -52,22 +52,5 @@
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
     "semantic-release": "^15.1.6"
-  },
-  "jest": {
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "<rootDir>/.jest"
-    ],
-    "roots": [
-      "<rootDir>/src"
-    ],
-    "setupFiles": [
-      "<rootDir>/.jest/shim.js",
-      "<rootDir>/.jest/test-setup.js"
-    ],
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "<rootDir>/.jest"
-    ]
   }
 }
