@@ -4,4 +4,4 @@ services:
     build: "."
     container_name: "react-preloadr"
     volumes:
-      - ./:/app
+      - ./:/home/node/app
