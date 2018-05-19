@@ -1,4 +1,3 @@
-import isArray from 'lodash.isarray';
 import PropTypes from 'prop-types';
 import Maybe from 'react-maybe';
 
@@ -14,12 +13,12 @@ export const Empty = () => null;
 const isFailedSingle = status => status === PRELOAD_STATUS_FAILED;
 const isFailedMultiple = statii => statii.some(isFailedSingle);
 const isFailed = status =>
-  (isArray(status) ? isFailedMultiple(status) : isFailedSingle(status));
+  (Array.isArray(status) ? isFailedMultiple(status) : isFailedSingle(status));
 
 const isRequestedSingle = status => status === PRELOAD_STATUS_REQUESTED;
 const isRequestedMultiple = statii => statii.some(isRequestedSingle);
 const isRequested = status =>
-  (isArray(status) ? isRequestedMultiple(status) : isRequestedSingle(status));
+  (Array.isArray(status) ? isRequestedMultiple(status) : isRequestedSingle(status));
 
 const Preloadr = ({ children, failed, requested, status }) =>
   Maybe({
