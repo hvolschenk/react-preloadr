@@ -21,6 +21,15 @@ describe('Shared / Higher order components / Preload / reducer', () => {
     expect(actual).toEqual(expected);
   });
 
+  test('accepts initialState', () => {
+    const initialState = { status: undefined, payload: [] };
+
+    const expected = initialState;
+
+    const actual = reducer(FAILED, REQUESTED, SUCCEEDED, initialState)();
+    expect(actual).toEqual(expected);
+  });
+
   test('FAILED', () => {
     const ACTION = {
       payload: PAYLOAD,
