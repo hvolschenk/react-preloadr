@@ -65,11 +65,16 @@ by `react-preloadr`, namely `PRELOAD_STATUS_FAILED`, `PRELOAD_STATUS_REQUESTED` 
 _/reducers/products/reducer.js_
 
 ```js
-import { reducer } from 'react-preloadr';
+import { reducer, PRELOAD_STATUS_REQUESTED } from 'react-preloadr';
 
 import { PRODUCTS_FAILED, PRODUCTS_REQUESTED, PRODUCTS_SUCCEEDED } from './actions'
 
-export default reducer(PRODUCTS_FAILED, PRODUCTS_REQUESTED, PRODUCTS_SUCCEEDED);
+const optionalInitialState = {
+  payload: [],
+  status: PRELOAD_STATUS_REQUESTED,
+};
+
+export default reducer(PRODUCTS_FAILED, PRODUCTS_REQUESTED, PRODUCTS_SUCCEEDED, optionalInitialState);
 ```
 
 And then combine this reducer into your application reducer:
