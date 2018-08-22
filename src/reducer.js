@@ -8,8 +8,8 @@ const defaultState = {
   status: PRELOAD_STATUS_REQUESTED,
 };
 
-export default (FAILED, REQUESTED, SUCCEEDED) =>
-  (state = defaultState, action = {}) => {
+export default (FAILED, REQUESTED, SUCCEEDED, initialState = defaultState) =>
+  (state = initialState, action = {}) => {
     switch (action.type) {
       case FAILED:
         return {
