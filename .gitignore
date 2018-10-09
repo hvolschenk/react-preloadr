@@ -41,6 +41,7 @@ jspm_packages/
 typings/
 
 # Optional npm cache directory
+.config
 .npm
 
 # Optional eslint cache
