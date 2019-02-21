@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/hvolschenk/react-preloadr.svg?branch=master)](https://travis-ci.org/hvolschenk/react-preloadr)
 [![Coverage Status](https://coveralls.io/repos/github/hvolschenk/react-preloadr/badge.svg?branch=master)](https://coveralls.io/github/hvolschenk/react-preloadr?branch=master)
-[![NSP Status](https://nodesecurity.io/orgs/hendrik-volschenk/projects/adc4e10f-1ad9-497a-aa8e-26cefc398da2/badge)](https://nodesecurity.io/orgs/hendrik-volschenk/projects/adc4e10f-1ad9-497a-aa8e-26cefc398da2)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 A React preloader component, for displaying an indicator while performing asynchronous tasks. It
