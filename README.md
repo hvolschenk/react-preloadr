@@ -73,7 +73,12 @@ const optionalInitialState = {
   status: PRELOAD_STATUS_REQUESTED,
 };
 
-export default reducer(PRODUCTS_FAILED, PRODUCTS_REQUESTED, PRODUCTS_SUCCEEDED, optionalInitialState);
+export default reducer(
+  PRODUCTS_FAILED,
+  PRODUCTS_REQUESTED,
+  PRODUCTS_SUCCEEDED,
+  optionalInitialState,
+);
 ```
 
 And then combine this reducer into your application reducer:
@@ -97,9 +102,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Preloadr, { preloadDefaultProp, preloadPropTypes } from 'react-preloadr';
 
-import { productsRequestedAsync } from 'reducers/products/actions';
+import { productsRequestedAsync } from './thunks';
 
-const Failed = () => <p>Failed to load products</p>;
+const Failed = ({ error }) => <p>{error.message}</p>;
 const Requested = () => <p>Loading products</p>;
 const ProductsList = ({ payload }) => (
   <ul>{payload.map(product => <li key={product.id}>{product.name}</li>)}</ul>
@@ -110,9 +115,13 @@ class Products extends React.Component {
     this.props.fetchProducts();
   }
   render() {
-    const { payload, status } = this.props;
+    const { error, payload, status } = this.props;
     return (
-      <Preloadr failed={() => <Failed />} requested={() => <Requested />} status={status}>
+      <Preloadr
+        failed={() => <Failed error={error} />}
+        requested={() => <Requested />}
+        status={status}
+      >
         {() => <ProductsList payload={payload} />}
       </Preloadr>
     );
@@ -120,11 +129,13 @@ class Products extends React.Component {
 }
 
 Products.propTypes = {
+  error: PropTypes.shape({ message: PropTypes.string }),
   payload: PropTypes.arrayOf(PropTypes.shape()),
   status: preloadDefaultProps,
 };
 
 Products.defaultProps = {
+  error: {},
   payload: [],
   status: preloadDefaultProp,
 };
@@ -151,13 +162,17 @@ import Preloadr, {
 
 import fetchProducts from 'api/products';
 
-const Failed = () => <p>Something went wrong</p>;
+const Failed = ({ error }) => <p>{error.message}</p>;
 const Requested = () => <p>Loading products</p>;
+const ProductsList = ({ payload }) => (
+  <ul>{payload.map(product => <li key={product.id}>{product.name}</li>)}</ul>
+);
 
 class Products extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      error: {},
       payload: [],
       status: PRELOAD_STATUS_REQUESTED,
     };
@@ -165,13 +180,17 @@ class Products extends React.Component {
   componentDidMount() {
     fetchProducts()
       .then(payload => this.setState({ payload, status: PRELOAD_STATUS_SUCCEEDED }))
-      .catch(error => this.setState({ payload: error, status: PRELOAD_STATUS_FAILED }));
+      .catch(error => this.setState({ error: error, status: PRELOAD_STATUS_FAILED }));
   }
   render() {
-    const { payload, status } = this.state;
+    const { error, payload, status } = this.state;
     return (
-      <Preloadr failed={() => <Failed />} requested={() => <Requested />} status={status}>
-        {() => <Products payload={payload} />}
+      <Preloadr
+        failed={() => <Failed error={error} />}
+        requested={() => <Requested />}
+        status={status}
+      >
+        {() => <ProductsList payload={payload} />}
       </Preloadr>
     );
   }
@@ -193,12 +212,11 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Preloadr, { preloadDefaultProp, preloadPropTypes } from 'react-preloadr';
 
-import { productsRequestedAsync } from 'reducers/products/actions';
-import { usersRequestedAsync } from 'reducers/users/actions';
+import { productsRequestedAsync, usersRequestedAsync } from './thunks';
 
-const Failed = () => <p>Failed to load products</p>;
+const Failed = ({ error }) => <p>{error.message}</p>;
 const Requested = () => <p>Loading products</p>;
-const ProductsList = ({ products, users }) => (
+const List = ({ products, users }) => (
   <div><!-- Do something with products and users --></div>
 );
 
@@ -208,16 +226,16 @@ class Products extends React.Component {
   }
   render() {
     const {
-      products: { payload: productsPayload, status: productsStatus },
-      users: { payload: usersPayload, status: usersStatus },
+      products: { error: productsError, payload: productsPayload, status: productsStatus },
+      users: { error: usersError, payload: usersPayload, status: usersStatus },
     } = this.props;
     return (
       <Preloadr
-        failed={() => <Failed />}
+        failed={() => <Failed error={productsError || usersError} />}
         requested={() => <Requested />}
         status={[productsStatus, usersStatus]}
       >
-        {() => <ProductsList products={productsPayload} users={usersPayload} />}
+        {() => <List products={productsPayload} users={usersPayload} />}
       </Preloadr>
     );
   }
@@ -225,10 +243,12 @@ class Products extends React.Component {
 
 Products.propTypes = {
   products: PropTypes.shape({
+    error: PropTypes.shape({ message: PropTypes.string }),
     payload: PropTypes.arrayOf(PropTypes.shape()),
     status: preloadDefaultProps,
   }),
   users: PropTypes.shape({
+    error: PropTypes.shape({ message: PropTypes.string }),
     payload: PropTypes.arrayOf(PropTypes.shape()),
     status: preloadDefaultProps,
   }),
@@ -236,10 +256,12 @@ Products.propTypes = {
 
 Products.defaultProps = {
   products: {
+    error: undefined,
     payload: [],
     status: preloadDefaultProp,
   },
   users: {
+    error: undefined,
     payload: [],
     status: preloadDefaultProp,
   },

@@ -5,70 +5,38 @@ import {
   PRELOAD_STATUS_SUCCEEDED,
 } from './status';
 
-describe('Shared / Higher order components / Preload / reducer', () => {
-  const PAYLOAD = 'PAYLOAD';
-  const FAILED = 'FAILED';
-  const REQUESTED = 'REQUESTED';
-  const SUCCEEDED = 'SUCCEEDED';
-  const implementedReducer = reducer(FAILED, REQUESTED, SUCCEEDED);
+const PAYLOAD = 'PAYLOAD';
+const FAILED = 'FAILED';
+const REQUESTED = 'REQUESTED';
+const SUCCEEDED = 'SUCCEEDED';
 
-  test('default', () => {
-    const expected = {
-      status: PRELOAD_STATUS_REQUESTED,
-    };
+let implementedReducer;
 
-    const actual = implementedReducer();
-    expect(actual).toEqual(expected);
-  });
+beforeAll(() => {
+  implementedReducer = reducer(FAILED, REQUESTED, SUCCEEDED);
+});
 
-  test('accepts initialState', () => {
-    const initialState = { status: undefined, payload: [] };
+test('default', () => {
+  expect(implementedReducer()).toEqual({ status: PRELOAD_STATUS_REQUESTED });
+});
 
-    const expected = initialState;
+test('accepts initialState', () => {
+  const INITIAL_STATE = { status: undefined, payload: [] };
+  expect(reducer(FAILED, REQUESTED, SUCCEEDED, INITIAL_STATE)()).toEqual(INITIAL_STATE);
+});
 
-    const actual = reducer(FAILED, REQUESTED, SUCCEEDED, initialState)();
-    expect(actual).toEqual(expected);
-  });
+test('FAILED', () => {
+  const ACTION = { payload: PAYLOAD, type: FAILED };
+  expect(implementedReducer(undefined, ACTION))
+    .toEqual({ error: PAYLOAD, status: PRELOAD_STATUS_FAILED });
+});
 
-  test('FAILED', () => {
-    const ACTION = {
-      payload: PAYLOAD,
-      type: FAILED,
-    };
-    const expected = {
-      payload: PAYLOAD,
-      status: PRELOAD_STATUS_FAILED,
-    };
+test('REQUESTED', () => {
+  expect(implementedReducer(undefined, { payload: PAYLOAD, type: REQUESTED }))
+    .toEqual({ payload: PAYLOAD, status: PRELOAD_STATUS_REQUESTED });
+});
 
-    const actual = implementedReducer(undefined, ACTION);
-    expect(actual).toEqual(expected);
-  });
-
-  test('REQUESTED', () => {
-    const ACTION = {
-      payload: PAYLOAD,
-      type: REQUESTED,
-    };
-    const expected = {
-      payload: PAYLOAD,
-      status: PRELOAD_STATUS_REQUESTED,
-    };
-
-    const actual = implementedReducer(undefined, ACTION);
-    expect(actual).toEqual(expected);
-  });
-
-  test('SUCCEEDED', () => {
-    const ACTION = {
-      payload: PAYLOAD,
-      type: SUCCEEDED,
-    };
-    const expected = {
-      payload: PAYLOAD,
-      status: PRELOAD_STATUS_SUCCEEDED,
-    };
-
-    const actual = implementedReducer(undefined, ACTION);
-    expect(actual).toEqual(expected);
-  });
+test('SUCCEEDED', () => {
+  expect(implementedReducer(undefined, { payload: PAYLOAD, type: SUCCEEDED }))
+    .toEqual({ payload: PAYLOAD, status: PRELOAD_STATUS_SUCCEEDED });
 });
