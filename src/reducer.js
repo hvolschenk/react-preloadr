@@ -15,7 +15,7 @@ export default (FAILED, REQUESTED, SUCCEEDED, initialState = defaultState) => (
   switch (action.type) {
     case FAILED:
       return {
-        payload: action.payload,
+        error: action.payload,
         status: PRELOAD_STATUS_FAILED,
       };
     case REQUESTED:
