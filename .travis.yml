@@ -5,7 +5,7 @@ cache:
 notifications:
   email: false
 node_js:
-  - '10'
+  - '12'
 after_success:
   - npm run build
   - npx semantic-release
